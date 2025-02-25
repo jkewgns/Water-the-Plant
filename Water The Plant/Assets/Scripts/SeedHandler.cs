@@ -1,14 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class SeedHandler : MonoBehaviour
 {
     public RectTransform imageRectTransform;
     public Image uiImage;
     public TextMeshProUGUI textMeshPro;
+    public TextMeshProUGUI controllerTextMeshPro;
     public float gravity = 9.8f;
     private float currentFallSpeed = 0f;
     private bool hasFallen = false;
@@ -19,9 +19,24 @@ public class SeedHandler : MonoBehaviour
     public AudioClip disappearSound;
     private bool hasPlayedDisappearSound = false;
 
-    void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !hasFallen)
+        // Detect keyboard or gamepad input
+        if ((Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame) ||
+            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)) // A (Xbox) / X (PlayStation)
+        {
+            StartFalling();
+        }
+
+        if (hasFallen)
+        {
+            ApplyGravity();
+        }
+    }
+
+    private void StartFalling()
+    {
+        if (!hasFallen)
         {
             if (pressESound != null)
             {
@@ -29,49 +44,35 @@ public class SeedHandler : MonoBehaviour
             }
 
             imageRectTransform.gameObject.SetActive(true);
-
-            if (textMeshPro != null)
-            {
-                textMeshPro.gameObject.SetActive(true);
-            }
-
-            if (uiImage != null)
-            {
-                uiImage.gameObject.SetActive(true);
-            }
+            textMeshPro?.gameObject.SetActive(true);
+            controllerTextMeshPro?.gameObject.SetActive(true);
+            uiImage?.gameObject.SetActive(true);
 
             imageRectTransform.anchoredPosition = new Vector2(0, 0);
             hasFallen = true;
             fallTimer = 0f;
             hasPlayedDisappearSound = false;
         }
+    }
 
-        if (hasFallen)
+    private void ApplyGravity()
+    {
+        currentFallSpeed += gravity * Time.deltaTime;
+        imageRectTransform.anchoredPosition += Vector2.down * currentFallSpeed * Time.deltaTime;
+        fallTimer += Time.deltaTime;
+
+        if (fallTimer >= fallTime && !hasPlayedDisappearSound)
         {
-            currentFallSpeed += gravity * Time.deltaTime;
-            imageRectTransform.anchoredPosition += Vector2.down * currentFallSpeed * Time.deltaTime;
-            fallTimer += Time.deltaTime;
-
-            if (fallTimer >= fallTime && !hasPlayedDisappearSound)
+            if (disappearSound != null)
             {
-                if (disappearSound != null)
-                {
-                    audioSource.PlayOneShot(disappearSound, 0.5f);
-                }
-
-                hasPlayedDisappearSound = true;
-                imageRectTransform.gameObject.SetActive(false);
-
-                if (uiImage != null)
-                {
-                    uiImage.gameObject.SetActive(false);
-                }
-
-                if (textMeshPro != null)
-                {
-                    textMeshPro.gameObject.SetActive(false);
-                }
+                audioSource.PlayOneShot(disappearSound, 0.5f);
             }
+
+            hasPlayedDisappearSound = true;
+            imageRectTransform.gameObject.SetActive(false);
+            uiImage?.gameObject.SetActive(false);
+            textMeshPro?.gameObject.SetActive(false);
+            controllerTextMeshPro.gameObject.SetActive(false);
         }
     }
 }

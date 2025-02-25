@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class TimingBar : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class TimingBar : MonoBehaviour
     private UnityEngine.Color originalColor;
     private UnityEngine.Color initialBackgroundColor;
     private float minGreenSize = 20f;
-    private float shrinkAmount = 10f; //110
+    private float shrinkAmount = 10f;
     public static int successCount = 0;
     public static int maxSuccesses = 4;
 
@@ -44,7 +45,17 @@ public class TimingBar : MonoBehaviour
         float t = Mathf.PingPong(Time.time * speed, 1);
         marker.anchoredPosition = new Vector2((t * barWidth) - (barWidth / 2), marker.anchoredPosition.y);
 
-        if (Input.GetMouseButtonDown(0) && !isOnCooldown)
+        // Detect input from both mouse and controller buttons
+        if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) ||
+            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)) // A (Xbox) / X (PlayStation)
+        {
+            HandleButtonPress();
+        }
+    }
+
+    void HandleButtonPress()
+    {
+        if (!isOnCooldown)
         {
             StartCoroutine(ClickCooldown());
 
@@ -122,7 +133,6 @@ public class TimingBar : MonoBehaviour
             Debug.Log("Background Updated: " + newColor);
         }
     }
-
 
     bool IsInGreenZone()
     {
