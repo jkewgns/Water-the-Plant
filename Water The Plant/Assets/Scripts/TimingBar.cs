@@ -24,6 +24,9 @@ public class TimingBar : MonoBehaviour
     public static int successCount = 0;
     public static int maxSuccesses = 4;
 
+    private bool isOnCooldown = false;
+    public float clickCooldown = 1f;
+
     void Start()
     {
         barWidth = GetComponent<RectTransform>().rect.width;
@@ -41,8 +44,10 @@ public class TimingBar : MonoBehaviour
         float t = Mathf.PingPong(Time.time * speed, 1);
         marker.anchoredPosition = new Vector2((t * barWidth) - (barWidth / 2), marker.anchoredPosition.y);
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !isOnCooldown)
         {
+            StartCoroutine(ClickCooldown());
+
             if (IsInGreenZone())
             {
                 successCount++;
@@ -68,6 +73,13 @@ public class TimingBar : MonoBehaviour
                 Invoke("LoadLossScene", 0.5f);
             }
         }
+    }
+
+    IEnumerator ClickCooldown()
+    {
+        isOnCooldown = true;
+        yield return new WaitForSeconds(clickCooldown);
+        isOnCooldown = false;
     }
 
     void LoadLossScene()
