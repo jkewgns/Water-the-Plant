@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
@@ -8,8 +8,6 @@ public class WateringHandler : MonoBehaviour
 {
     public Image image;
     public Image targetImage;
-
-    // UI elements to enable
     public TextMeshProUGUI text1;
     public TextMeshProUGUI text2;
     public Image extraImage1;
@@ -30,38 +28,32 @@ public class WateringHandler : MonoBehaviour
     {
         if (image != null)
             image.gameObject.SetActive(false);
-
         if (targetImage != null)
             targetImage.gameObject.SetActive(false);
-
-        // Disable UI elements at the start
-        if (text1 != null) text1.gameObject.SetActive(false);
-        if (text2 != null) text2.gameObject.SetActive(false);
-        if (extraImage1 != null) extraImage1.gameObject.SetActive(false);
-        if (extraImage2 != null) extraImage2.gameObject.SetActive(false);
     }
 
     void Update()
     {
         if (showCount >= maxShows || isOnCooldown) return;
 
-        // Show target image when pressing E (Keyboard) or A/X (Gamepad)
         if ((Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame) ||
-            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)) // A (Xbox) / X (PlayStation)
+            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame))
         {
-            if (!canShowImage) // First press shows target image
+            if (!canShowImage)
             {
                 ShowTargetImage();
             }
         }
 
-        // Show watering can with LMB (mouse) or A/X (controller)
         if (canShowImage &&
             ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) ||
-            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame))) // A (Xbox) / X (PlayStation)
+            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)))
         {
-            StartCoroutine(ClickCooldown());
-            ShowImage();
+            if (showCount == 0 || TimingBar.currentSuccess)
+            {
+                StartCoroutine(ClickCooldown());
+                ShowImage();
+            }
         }
     }
 
@@ -77,14 +69,15 @@ public class WateringHandler : MonoBehaviour
     IEnumerator HideTargetImageAfterSeconds(float seconds)
     {
         yield return new WaitForSeconds(seconds);
+
         if (targetImage != null)
             targetImage.gameObject.SetActive(false);
 
         if (showCount < maxShows)
         {
-            Debug.Log("Target Image Disabled -> Now you can show the watering can.");
+            yield return new WaitForSeconds(0.1f);
             canShowImage = true;
-            EnableUIElements(); // UI elements appear immediately!
+            ShowUIElements();
         }
     }
 
@@ -92,30 +85,38 @@ public class WateringHandler : MonoBehaviour
     {
         if (showCount >= maxShows || image == null) return;
 
-        Debug.Log("LMB/A/X Pressed -> Showing Watering Can");
-        image.gameObject.SetActive(true);
-        LeanTween.rotateZ(image.gameObject, tiltAngle, tiltDuration).setEaseOutQuad();
-        StartCoroutine(HideAfterSeconds(displayTime));
-        showCount++;
-
-        if (showCount >= maxShows)
+        if (showCount > 0 && !TimingBar.currentSuccess)
         {
-            Debug.Log("Max limit reached! Disabling watering can.");
-            canShowImage = false;
+            return;
         }
+
+        if (!image.gameObject.activeSelf)
+        {
+            image.gameObject.SetActive(true);
+            image.rectTransform.rotation = Quaternion.Euler(0, 0, 0);
+            LeanTween.rotateZ(image.gameObject, tiltAngle, tiltDuration).setEaseOutQuad();
+            StartCoroutine(HideAfterSeconds(displayTime));
+            showCount++;
+
+            if (showCount >= maxShows)
+            {
+                canShowImage = false;
+            }
+        }
+    }
+
+    void ShowUIElements()
+    {
+        if (text1 != null) text1.gameObject.SetActive(true);
+        if (text2 != null) text2.gameObject.SetActive(true);
+        if (extraImage1 != null) extraImage1.gameObject.SetActive(true);
+        if (extraImage2 != null) extraImage2.gameObject.SetActive(true);
     }
 
     IEnumerator HideAfterSeconds(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-
-        if (image != null)
-        {
-            LeanTween.rotateZ(image.gameObject, 0, tiltDuration).setEaseOutQuad();
-            yield return new WaitForSeconds(tiltDuration);
-            image.gameObject.SetActive(false);
-            Debug.Log("Tilting image hidden");
-        }
+        image.gameObject.SetActive(false);
     }
 
     IEnumerator ClickCooldown()
@@ -123,14 +124,5 @@ public class WateringHandler : MonoBehaviour
         isOnCooldown = true;
         yield return new WaitForSeconds(clickCooldown);
         isOnCooldown = false;
-    }
-
-    void EnableUIElements()
-    {
-        if (text1 != null) text1.gameObject.SetActive(true);
-        if (text2 != null) text2.gameObject.SetActive(true);
-        if (extraImage1 != null) extraImage1.gameObject.SetActive(true);
-        if (extraImage2 != null) extraImage2.gameObject.SetActive(true);
-        Debug.Log("UI elements enabled as soon as canShowImage is true.");
     }
 }

@@ -2106,6 +2106,12 @@ MonoBehaviour:
   greenZone: {fileID: 1165746966}
   timingBar: {fileID: 1900698800}
   backgroundImage: {fileID: 74004331}
+  changingImage: {fileID: 949991792}
+  successSprites:
+  - {fileID: -1427545178, guid: c02a4089db7113a4fabfc261f8f763be, type: 3}
+  - {fileID: 849104318, guid: c02a4089db7113a4fabfc261f8f763be, type: 3}
+  - {fileID: 1237920208, guid: c02a4089db7113a4fabfc261f8f763be, type: 3}
+  - {fileID: 1237920208, guid: c02a4089db7113a4fabfc261f8f763be, type: 3}
   speed: 1
   audioSource: {fileID: 1900698805}
   hitSound: {fileID: 8300000, guid: 14956c769a7f65f40a4fb4fb58348fa4, type: 3}

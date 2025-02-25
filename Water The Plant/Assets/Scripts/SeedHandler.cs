@@ -21,9 +21,8 @@ public class SeedHandler : MonoBehaviour
 
     private void Update()
     {
-        // Detect keyboard or gamepad input
         if ((Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame) ||
-            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)) // A (Xbox) / X (PlayStation)
+            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame))
         {
             StartFalling();
         }
