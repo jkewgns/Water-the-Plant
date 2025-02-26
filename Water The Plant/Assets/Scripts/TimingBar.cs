@@ -24,7 +24,7 @@ public class TimingBar : MonoBehaviour
     private Color originalColor;
     private Color initialBackgroundColor;
     private float minGreenSize = 20f;
-    private float shrinkAmount = 10f; //110
+    private float shrinkAmount = 110f; 
     public static int successCount = 0;
     public static int maxSuccesses = 4;
 
