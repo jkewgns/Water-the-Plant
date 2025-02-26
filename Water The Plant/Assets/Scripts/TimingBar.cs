@@ -24,7 +24,7 @@ public class TimingBar : MonoBehaviour
     private Color originalColor;
     private Color initialBackgroundColor;
     private float minGreenSize = 20f;
-    private float shrinkAmount = 110f;
+    private float shrinkAmount = 10f; //110
     public static int successCount = 0;
     public static int maxSuccesses = 4;
 
@@ -35,6 +35,9 @@ public class TimingBar : MonoBehaviour
 
     void Start()
     {
+        successCount = 0;
+        currentSuccess = false;
+
         barWidth = GetComponent<RectTransform>().rect.width;
         originalScale = marker.localScale;
         originalColor = marker.GetComponent<Image>().color;
@@ -74,7 +77,7 @@ public class TimingBar : MonoBehaviour
 
                 if (successCount >= maxSuccesses)
                 {
-                    SceneManager.LoadScene("Win");
+                    StartCoroutine(ShowWinScreen());
                 }
                 else
                 {
@@ -88,6 +91,13 @@ public class TimingBar : MonoBehaviour
             }
         }
     }
+
+    IEnumerator ShowWinScreen()
+    {
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene("Win");
+    }
+
 
     void LoadLossScene()
     {
@@ -129,7 +139,22 @@ public class TimingBar : MonoBehaviour
         if (backgroundImage != null)
         {
             float progress = (float)successCount / maxSuccesses;
-            backgroundImage.color = Color.Lerp(initialBackgroundColor, Color.green, progress);
+
+            Color darkOrange = new Color(1f, 0.4f, 0f, 1f);
+            Color orange = new Color(1f, 0.6f, 0f, 1f);
+            Color yellow = new Color(1f, 1f, 0f, 1f);
+            Color brightYellow = new Color(1f, 1f, 0.5f, 1f);
+
+            Color newColor;
+
+            if (progress < 0.33f)
+                newColor = Color.Lerp(darkOrange, orange, progress / 0.33f);
+            else if (progress < 0.66f)
+                newColor = Color.Lerp(orange, yellow, (progress - 0.33f) / 0.33f);
+            else
+                newColor = Color.Lerp(yellow, brightYellow, (progress - 0.66f) / 0.34f);
+
+            backgroundImage.color = newColor;
         }
     }
 
