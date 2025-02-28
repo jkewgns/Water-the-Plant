@@ -22,7 +22,7 @@ public class WateringHandler : MonoBehaviour
     private bool canShowImage = false;
     private bool isOnCooldown = false;
     private int showCount = 0;
-    private int maxShows = 3;
+    private int maxShows = 6;
 
     void Start()
     {

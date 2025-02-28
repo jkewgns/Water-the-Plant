@@ -23,10 +23,10 @@ public class TimingBar : MonoBehaviour
     private Vector3 originalScale;
     private Color originalColor;
     private Color initialBackgroundColor;
-    private float minGreenSize = 20f;
-    private float shrinkAmount = 110f; 
+    private float minGreenSize = 40f;
+    private float shrinkAmount = 80f;
     public static int successCount = 0;
-    public static int maxSuccesses = 4;
+    public static int maxSuccesses = 6;
 
     private bool isOnCooldown = false;
     public float clickCooldown = 1f;
@@ -51,6 +51,7 @@ public class TimingBar : MonoBehaviour
     void Update()
     {
         float t = Mathf.PingPong(Time.time * speed, 1);
+        speed += 0.05f * Time.deltaTime;
         marker.anchoredPosition = new Vector2((t * barWidth) - (barWidth / 2), marker.anchoredPosition.y);
 
         if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) ||
