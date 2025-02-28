@@ -13,7 +13,8 @@ public class TimingBar : MonoBehaviour
     public Image changingImage;
     public Sprite[] successSprites;
 
-    public float speed = 2.0f;
+    public float defaultSpeed = 0.1f;
+    public float speed = 0.1f;
     private float barWidth;
 
     public AudioSource audioSource;
