@@ -2189,8 +2189,6 @@ MonoBehaviour:
   - {fileID: 849104318, guid: c02a4089db7113a4fabfc261f8f763be, type: 3}
   - {fileID: 1237920208, guid: c02a4089db7113a4fabfc261f8f763be, type: 3}
   - {fileID: -2116951067, guid: c02a4089db7113a4fabfc261f8f763be, type: 3}
-  defaultSpeed: 0.1
-  speed: 0.1
   audioSource: {fileID: 1900698805}
   hitSound: {fileID: 8300000, guid: 14956c769a7f65f40a4fb4fb58348fa4, type: 3}
   missSound: {fileID: 8300000, guid: 958ffda78cd23c34bb5a9c50b7eebeec, type: 3}
